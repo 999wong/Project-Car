@@ -10,8 +10,7 @@
 *.dep
 *.iex
 *.i
-*.bin
-*.hex
+*.map
 SI/
 project/
 
