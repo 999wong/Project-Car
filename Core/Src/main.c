@@ -40,6 +40,8 @@
 #define LH_FIX 0
 #define RH_FIX 0
 
+#define DEACT_SPEED 700
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -64,6 +66,7 @@ void Zuo_WeiYi(uint32_t speed);
 void You_WeiYi(uint32_t speed);
 void Stop(void);
 
+void qianjingezi(uint32_t gezi_num);
 void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RL);  //左前 右前 左后 右后
 void car_control(int32_t x, int32_t y, int32_t w);             //X轴 Y轴 角速度
 /* USER CODE END PFP */
@@ -71,8 +74,7 @@ void car_control(int32_t x, int32_t y, int32_t w);             //X轴 Y轴 角�
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-uint32_t qianjingezi = 0;
-
+uint32_t qianjin_flag = 0;
 /* USER CODE END 0 */
 
 /**
@@ -132,11 +134,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
   
-		qianjingezi = 5;
-	  qianjin(750, 0, 0);
-
-		HAL_Delay(20000);
-		Stop();
+		qianjingezi(5);
 		while(1);
 		
 		
@@ -249,9 +247,9 @@ void car_control(int32_t x, int32_t y, int32_t w)
 {
     int32_t lq, rq, lh, rh;
     lq = x + y - w + LQ_FIX;
-    rq = x - y - w + LQ_FIX;
+    rq = x - y + w + LQ_FIX;
     lh = x - y - w + LQ_FIX;
-    rh = x + y - w + LQ_FIX;
+    rh = x + y + w + LQ_FIX;
     
     car_run(lq, rq, lh, rh);
 }
@@ -363,8 +361,8 @@ void Zuo_WeiYi(uint32_t speed)
 
 void Stop(void)
 {	  
-	
-	  __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3,0);  //M2           
+        HAL_TIM_Base_Stop_IT(&htim10); 
+        __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3,0);  //M2           
 		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_4,0); 
 		
 		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_1,0);   //M3
@@ -378,75 +376,139 @@ void Stop(void)
 		
 }
 
+uint32_t gezi_flag = 0;
 
+void qianjingezi(uint32_t gezi_num)
+{
+    HAL_TIM_Base_Start_IT(&htim10); 
+    if (gezi_num > 0)
+    {
+        car_control(DEACT_SPEED, 0, 0);
+        gezi_flag = 0;
+        HAL_Delay(200);
+        while(gezi_flag == 0)
+            HAL_Delay(1);
+        gezi_num --;
+        HAL_GPIO_TogglePin(LED_GPIO_Port,LED_Pin);
+    }
+    else
+        Stop();
+    
+}
 
 void Xunji()
 {
 	
 //	static uint32_t heixian_flag;
- 
-  uint32_t qian[7];
-	qian[0]=HAL_GPIO_ReadPin(qian_1_GPIO_Port,qian_1_Pin);
-  qian[1]=HAL_GPIO_ReadPin(qian_2_GPIO_Port,qian_2_Pin);
-	qian[2]=HAL_GPIO_ReadPin(qian_3_GPIO_Port,qian_3_Pin);
-	qian[3]=HAL_GPIO_ReadPin(qian_4_GPIO_Port,qian_4_Pin);
-	qian[4]=HAL_GPIO_ReadPin(qian_5_GPIO_Port,qian_5_Pin);
-	qian[5]=HAL_GPIO_ReadPin(qian_6_GPIO_Port,qian_6_Pin);
+    uint32_t qian[7]; int32_t qian_num , qian_flag = 0;
+    qian[0]=HAL_GPIO_ReadPin(qian_1_GPIO_Port,qian_1_Pin);
+    qian[1]=HAL_GPIO_ReadPin(qian_2_GPIO_Port,qian_2_Pin);
+    qian[2]=HAL_GPIO_ReadPin(qian_3_GPIO_Port,qian_3_Pin);
+    qian[3]=HAL_GPIO_ReadPin(qian_4_GPIO_Port,qian_4_Pin);
+    qian[4]=HAL_GPIO_ReadPin(qian_5_GPIO_Port,qian_5_Pin);
+    qian[5]=HAL_GPIO_ReadPin(qian_6_GPIO_Port,qian_6_Pin);
 	qian[6]=HAL_GPIO_ReadPin(qian_7_GPIO_Port,qian_7_Pin);
+    qian_num = qian[0] +qian[1] +qian[2] +qian[3] +qian[4] +qian[5] +qian[6];
+    if ( qian_num == 1)             //如果只有一个循迹在线上
+    {
+        for(uint8_t i = 0; i<=6; i++)
+        {
+            if(qian[i] == 1)
+                qian_flag = i;       //记录第几个在线上
+        }
+    }
 	
 	
-	uint32_t hou[7];
-	hou[0]=HAL_GPIO_ReadPin(hou_1_GPIO_Port,hou_1_Pin);
-  hou[1]=HAL_GPIO_ReadPin(hou_2_GPIO_Port,hou_2_Pin);
-  hou[2]=HAL_GPIO_ReadPin(hou_3_GPIO_Port,hou_3_Pin);
-  hou[3]=HAL_GPIO_ReadPin(hou_4_GPIO_Port,hou_4_Pin);
-  hou[4]=HAL_GPIO_ReadPin(hou_5_GPIO_Port,hou_5_Pin);
-  hou[5]=HAL_GPIO_ReadPin(hou_6_GPIO_Port,hou_6_Pin);
-  hou[6]=HAL_GPIO_ReadPin(hou_7_GPIO_Port,hou_7_Pin);
-	
-	if(qian[3] == 1)
-		qianjin(750, 0, 0);
-	if(qian[2] == 1 )
-		qianjin(650, 0, 100);
-	else if(qian[4] == 1 )
-		qianjin(650, 100, 0);
+	uint32_t hou[7]; int32_t hou_num , hou_flag = 0;
+	hou[6]=HAL_GPIO_ReadPin(hou_1_GPIO_Port,hou_1_Pin);
+    hou[5]=HAL_GPIO_ReadPin(hou_2_GPIO_Port,hou_2_Pin);
+    hou[4]=HAL_GPIO_ReadPin(hou_3_GPIO_Port,hou_3_Pin);
+    hou[3]=HAL_GPIO_ReadPin(hou_4_GPIO_Port,hou_4_Pin);
+    hou[2]=HAL_GPIO_ReadPin(hou_5_GPIO_Port,hou_5_Pin);
+    hou[1]=HAL_GPIO_ReadPin(hou_6_GPIO_Port,hou_6_Pin);
+    hou[0]=HAL_GPIO_ReadPin(hou_7_GPIO_Port,hou_7_Pin);
+    
+    hou_num = hou[0] +hou[1] +hou[2] +hou[3] +hou[4] +hou[5] +hou[6];
+    if ( hou_num == 1)             //如果只有一个循迹在线上
+    {
+        for(uint8_t i = 0; i<=6; i++)
+        {
+            if(hou[i] == 1)
+                hou_flag = i;       //记录第几个在线上
+        }
+    }
+    
+    
+
+    
+/******************单独前循迹纠偏*******************/
+
+	if(qian[3] == 1)        
+		car_control(DEACT_SPEED, 0, 0);
+	if(qian[2] == 1 && qian[4] == 0)
+		car_control(DEACT_SPEED, -50, 20);
+	else if(qian[4] == 1 && qian[2] == 0)
+		car_control(DEACT_SPEED, 50, -20);
 	
 	if(qian[1] == 1 && qian[5] == 0)
-		qianjin(600, 0, 130);
+		car_control(DEACT_SPEED - 50, -100, 50);
 	if(qian[5] == 1 && qian[1] == 0)
-		qianjin(600, 130, 0);
+		car_control(DEACT_SPEED - 50, 100, -50);
 	
 	if(qian[0] == 1 && qian[6] == 0)
-		qianjin(600, 0, 160);
+		car_control(DEACT_SPEED - 100, -100, 70);
 	if(qian[6] == 1 && qian[0] == 0)
-		qianjin(600, 160, 0);
+		car_control(DEACT_SPEED - 100, 100, -70);
 
+/************************************************/ 
+    
+/******************前后双循迹纠偏*******************/
+//    int32_t y_fix, w_fix;
+//    if (qian_num == 1 && hou_num ==1)
+//    {
+//        if (qian_flag + hou_flag >= 5 && qian_flag + hou_flag <= 7)
+//            y_fix = 0;
+//        if (qian_flag + hou_flag < 5 && qian_flag + hou_flag >= 3)
+//            y_fix = -50;
+//        if (qian_flag + hou_flag > 7 && qian_flag + hou_flag <= 9)
+//            y_fix = 50;
+//        if (qian_flag + hou_flag < 3)
+//            y_fix = 100;
+//        if (qian_flag + hou_flag > 9)
+//            y_fix = -100;
+//        
+//        if (qian_num - hou_num == 0)
+//            w_fix = 0;
+//        if (qian_num - hou_num > 0 && qian_num - hou_num <= 2)
+//            w_fix = -50;
+//        if (qian_num - hou_num < 0 && qian_num - hou_num >= -2)
+//            w_fix = 50;
+//        if (qian_num - hou_num > 2)
+//            w_fix = -100;
+//        if (qian_num - hou_num < -2)
+//            w_fix = 100;
+//        car_control(DEACT_SPEED, y_fix, w_fix);
+//    }
+//    else
+//        car_control(DEACT_SPEED, 0, 0);
 
+/************************************************/
+
+    
 	
-	if(qian[2] == 1 && qian[3] == 1 && qian[4] == 1)
+	if((qian[2] == 1 && qian[3] == 1 && qian[4] == 1) || (hou[2] == 1 && hou[3] == 1 && hou[4] == 1))   //前后循迹在线上则不纠偏
 	{
-//		if(heixian_flag == 0)					//到黑线上后第一次检测
-//			qianjingezi --;
-//		
-//		if(qianjingezi > 0)						//需要继续前进
-//			qianjin(600, 0, 0);
-//		else													//到达目的地
-//		{
-			Stop();
-			HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
-//		}
-//		heixian_flag = 1;							//在黑线上
-//	}
-//	else		//不在黑线上
-//	{
-//		heixian_flag = 0;							//出黑线
+		car_control(DEACT_SPEED, 0, 0);
+        if(qian[2] == 1 && qian[3] == 1 && qian[4] == 1)
+        {
+            HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+            gezi_flag = 1;
+        }
+        else
+        {
+            HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
+        }
 	}
-	else
-	{
-		HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
-	}
-			
-	//printf();
 
 }
 
