@@ -40,7 +40,7 @@
 #define LH_FIX 0
 #define RH_FIX 0
 
-#define DEACT_SPEED 700
+#define DEACT_SPEED 600
 
 /* USER CODE END PD */
 
@@ -287,13 +287,13 @@ void Stop(void)
 uint32_t gezi_flag = 0;
 void qianjingezi(uint32_t gezi_num)
 {
+		HAL_TIM_Base_Start_IT(&htim10); 
 		while(gezi_num)
 		{
 				run_flag = QIANJIN;
 				car_control(DEACT_SPEED, 0, 0);
 				gezi_flag = 0;
-				HAL_Delay(200);
-				HAL_TIM_Base_Start_IT(&htim10); 
+				HAL_Delay(300);
 				while(gezi_flag == 0)
 						HAL_Delay(1);
 				gezi_num --;
