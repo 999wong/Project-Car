@@ -58,6 +58,8 @@ void Zuo_WeiYi(uint32_t speed);
 void You_WeiYi(uint32_t speed);
 void Stop(void);
 
+void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RL);  //左前 右前 左后 右后
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -191,6 +193,51 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+#include "stdlib.h"
+
+void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RH)
+{
+    if(LQ >= 0)
+    {
+        __HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_1, LQ);   	        //M3  			前左轮
+		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_2, 0);
+    }
+    else
+    {
+        __HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_1, 0);   	        //M3  			前左轮
+		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_2, abs(LQ));
+    }
+    if(RQ >= 0)
+    {
+		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_3, 0);    								//M4   			前右轮
+		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_4, RQ);	  
+    }
+    else
+    {
+		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_3, abs(RQ));    								//M4   			前右轮
+		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_4, 0);	  
+    }
+    if(LH >= 0)
+    {
+		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3, LH);  	//M2        后左轮    
+		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_4, 0); 
+    }
+    else
+    {
+		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3, 0);  	//M2        后左轮    
+		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_4, abs(LH));  
+    }
+    if(RH >= 0)
+    {
+		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1, 0);    								//M1     		后右轮
+		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2, RH);	
+    }
+    else
+    {
+		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1, abs(RH));    								//M1     		后右轮
+		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2, 0);	
+    }
+}
 void qianjin(uint32_t speed, uint32_t left_duty, uint32_t right_duty)	
 {
 		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3, speed + left_duty);  	//M2        后左轮    
@@ -228,7 +275,7 @@ void Zuo_Guai(uint32_t speed)
 {
 
    
-	  __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3,0);  //M2           
+        __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3,0);  //M2           
 		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_4,speed); 
 		
 		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_1,0);   //M3
@@ -245,10 +292,8 @@ void Zuo_Guai(uint32_t speed)
 
 void  You_Guai(uint32_t speed)
 
-{
-
-   
-	  __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3,speed);  //M2           
+{  
+        __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3,speed);  //M2           
 		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_4,0); 
 		
 		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_1,speed);   //M3
@@ -259,8 +304,6 @@ void  You_Guai(uint32_t speed)
 		
 		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,speed);    //M1
 		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2,0);
-	
-
 }
 
 
@@ -322,11 +365,11 @@ void Stop(void)
 void Xunji()
 {
 	
-	static uint32_t heixian_flag;
+//	static uint32_t heixian_flag;
  
   uint32_t qian[7];
 	qian[0]=HAL_GPIO_ReadPin(qian_1_GPIO_Port,qian_1_Pin);
-  qian[1]=HAL_GPIO_ReadPin(qian_2_GPIO_Port,qian_2_Pin);
+    qian[1]=HAL_GPIO_ReadPin(qian_2_GPIO_Port,qian_2_Pin);
 	qian[2]=HAL_GPIO_ReadPin(qian_3_GPIO_Port,qian_3_Pin);
 	qian[3]=HAL_GPIO_ReadPin(qian_4_GPIO_Port,qian_4_Pin);
 	qian[4]=HAL_GPIO_ReadPin(qian_5_GPIO_Port,qian_5_Pin);
