@@ -141,11 +141,22 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
   
-		qianjingezi(6);
-		zuozhuan();
-		qianjingezi(6);
-		
-		zuozhuan();
+	qianjingezi(2);
+	
+	car_control(0,0,-700);
+	
+	HAL_Delay(1000);
+	
+	qianjingezi(8);
+	zuozhuan();
+	qianjingezi(7);
+	zuozhuan();
+	qianjingezi(8);
+	
+	
+	
+  youzhuan();
+//		qianjingezi(5);
 		while(1);
 		
 		
@@ -287,18 +298,18 @@ void Stop(void)
 uint32_t gezi_flag = 0;
 void qianjingezi(uint32_t gezi_num)
 {
+				HAL_TIM_Base_Start_IT(&htim10);
 		while(gezi_num)
-		{
-				HAL_TIM_Base_Start_IT(&htim10); 
+		{ 
 				run_flag = QIANJIN;
 				car_control(DEACT_SPEED, 0, 0);
 				gezi_flag = 0;
-				HAL_Delay(300);
+				HAL_Delay(700);
 				while(gezi_flag == 0)
 						HAL_Delay(1);
 				gezi_num --;
-				Stop();
-				HAL_Delay(1000);
+				//Stop();
+				//HAL_Delay(1000);
 				
 		}
     Stop();
@@ -310,7 +321,7 @@ void zuozhuan()
 {
     run_flag = ZUOZHUAN;
     car_control(0, 0, 700);
-    HAL_Delay(200);
+    HAL_Delay(500);
     HAL_TIM_Base_Start_IT(&htim10); 
     while(xuanzhuan_flag == 0)
         HAL_Delay(1);
@@ -322,7 +333,7 @@ void youzhuan()
 {
     run_flag = YOUZHUAN;
     car_control(0, 0, -700);
-    HAL_Delay(200);
+    HAL_Delay(500);
     HAL_TIM_Base_Start_IT(&htim10); 
     while(xuanzhuan_flag == 0)
         HAL_Delay(1);
@@ -438,9 +449,8 @@ void Xunji()
         {
             car_control(DEACT_SPEED, 0, 0);
         }
-        if(qian[2] == 1 && qian[3] == 1 && qian[4] == 1)      //小车在十字中心处
+        if(( zuo[3] == 1 || zuo[2] == 1)  && (you[4] == 1 || you[3] == 1 ))      //小车在十字中心处
         {
-
             gezi_flag = 1;
         }
 
@@ -488,7 +498,7 @@ void Xunji()
     }
     else if(run_flag == ZUOZHUAN || run_flag == YOUZHUAN)
     {
-        if((zuo[2] == 1 || zuo[3] == 1 || zuo[4] == 1) && (you[2] == 1 || you[3] == 1 || you[4] == 1))      //小车与十垂直
+        if(zuo[3] == 1  &&  you[3] == 1 )      //小车与十垂直
         {
             xuanzhuan_flag = 1;
         }
