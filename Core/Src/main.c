@@ -69,6 +69,9 @@ void Stop(void);
 void qianjingezi(uint32_t gezi_num);
 void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RL);  //左前 右前 左后 右后
 void car_control(int32_t x, int32_t y, int32_t w);             //X轴 Y轴 角速度
+
+void 		zuozhuan();
+	void			youzhuan();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -138,7 +141,11 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
   
-		qianjingezi(5);
+		qianjingezi(6);
+		zuozhuan();
+		qianjingezi(6);
+		
+		zuozhuan();
 		while(1);
 		
 		
@@ -263,37 +270,36 @@ void Stop(void)
 {	  
         HAL_TIM_Base_Stop_IT(&htim10); 
         run_flag = STPO_FLAG;
-        __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3,0);  //M2           
-		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_4,0); 
+        __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3,1000);  //M2           
+		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_4,1000); 
 		
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_1,0);   //M3
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_2,0);
+		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_1,1000);   //M3
+		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_2,1000);
 	
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_3,0);    //M4
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_4,0);	  
+		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_3,1000);    //M4
+		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_4,1000);	  
 		
-		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,0);    //M1
-		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2,0);                
+		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,1000);    //M1
+		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2,1000);                
 		
 }
 
 uint32_t gezi_flag = 0;
 void qianjingezi(uint32_t gezi_num)
 {
-    run_flag = QIANJIN;
-    if (gezi_num > 0)
-    {
-        car_control(DEACT_SPEED, 0, 0);
-        gezi_flag = 0;
-        HAL_Delay(200);
-        HAL_TIM_Base_Start_IT(&htim10); 
-        while(gezi_flag == 0)
-            HAL_Delay(1);
-        gezi_num --;
-        HAL_GPIO_TogglePin(LED_GPIO_Port,LED_Pin);
-    }
-    else
-        Stop();
+		while(gezi_num)
+		{
+				run_flag = QIANJIN;
+				car_control(DEACT_SPEED, 0, 0);
+				gezi_flag = 0;
+				HAL_Delay(200);
+				HAL_TIM_Base_Start_IT(&htim10); 
+				while(gezi_flag == 0)
+						HAL_Delay(1);
+				gezi_num --;
+		}
+    Stop();
+
 }
 
 uint32_t xuanzhuan_flag = 0;
@@ -425,11 +431,11 @@ void Xunji()
         if(qian[6] == 1 && qian[0] == 0)
             car_control(DEACT_SPEED - 100, 100, -70);
         
-        if((qian[2] == 1 && qian[3] == 1 && qian[4] == 1) || (hou[2] == 1 && hou[3] == 1 && hou[4] == 1))   //前后循迹在线上则不纠偏
+        if((qian[2] == 1 && qian[3] == 1 && qian[4] == 1) )   //前后循迹在线上则不纠偏
         {
             car_control(DEACT_SPEED, 0, 0);
         }
-        if((zuo[2] == 1 || zuo[3] == 1 || zuo[4] == 1) && (you[2] == 1 || you[3] == 1 || you[4] == 1))      //小车在十字中心处
+        if(qian[2] == 1 && qian[3] == 1 && qian[4] == 1)      //小车在十字中心处
         {
             gezi_flag = 1;
         }
