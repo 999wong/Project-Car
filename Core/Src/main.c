@@ -34,6 +34,12 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+#define LQ_FIX 0
+#define RQ_FIX 0
+#define LH_FIX 0
+#define RH_FIX 0
+
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -59,7 +65,7 @@ void You_WeiYi(uint32_t speed);
 void Stop(void);
 
 void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RL);  //左前 右前 左后 右后
-
+void car_control(int32_t x, int32_t y, int32_t w);             //X轴 Y轴 角速度
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -209,35 +215,47 @@ void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RH)
     }
     if(RQ >= 0)
     {
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_3, 0);    								//M4   			前右轮
+		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_3, 0);    			//M4   			前右轮
 		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_4, RQ);	  
     }
     else
     {
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_3, abs(RQ));    								//M4   			前右轮
+		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_3, abs(RQ));    	//M4   			前右轮
 		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_4, 0);	  
     }
     if(LH >= 0)
     {
-		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3, LH);  	//M2        后左轮    
+		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3, LH);  	        //M2        后左轮    
 		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_4, 0); 
     }
     else
     {
-		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3, 0);  	//M2        后左轮    
+		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3, 0);  	        //M2        后左轮    
 		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_4, abs(LH));  
     }
     if(RH >= 0)
     {
-		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1, 0);    								//M1     		后右轮
+		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1, 0);    			//M1     		后右轮
 		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2, RH);	
     }
     else
     {
-		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1, abs(RH));    								//M1     		后右轮
+		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1, abs(RH));        //M1     		后右轮
 		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2, 0);	
     }
 }
+
+void car_control(int32_t x, int32_t y, int32_t w)
+{
+    int32_t lq, rq, lh, rh;
+    lq = x + y - w + LQ_FIX;
+    rq = x - y - w + LQ_FIX;
+    lh = x - y - w + LQ_FIX;
+    rh = x + y - w + LQ_FIX;
+    
+    car_run(lq, rq, lh, rh);
+}
+
 void qianjin(uint32_t speed, uint32_t left_duty, uint32_t right_duty)	
 {
 		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3, speed + left_duty);  	//M2        后左轮    
