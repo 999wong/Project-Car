@@ -133,7 +133,7 @@ int main(void)
     /* USER CODE BEGIN 3 */
   
 		qianjingezi = 5;
-	  qianjin(700, 0, 0);
+	  qianjin(750, 0, 0);
 
 		HAL_Delay(20000);
 		Stop();
@@ -387,29 +387,39 @@ void Xunji()
  
   uint32_t qian[7];
 	qian[0]=HAL_GPIO_ReadPin(qian_1_GPIO_Port,qian_1_Pin);
-    qian[1]=HAL_GPIO_ReadPin(qian_2_GPIO_Port,qian_2_Pin);
+  qian[1]=HAL_GPIO_ReadPin(qian_2_GPIO_Port,qian_2_Pin);
 	qian[2]=HAL_GPIO_ReadPin(qian_3_GPIO_Port,qian_3_Pin);
 	qian[3]=HAL_GPIO_ReadPin(qian_4_GPIO_Port,qian_4_Pin);
 	qian[4]=HAL_GPIO_ReadPin(qian_5_GPIO_Port,qian_5_Pin);
 	qian[5]=HAL_GPIO_ReadPin(qian_6_GPIO_Port,qian_6_Pin);
 	qian[6]=HAL_GPIO_ReadPin(qian_7_GPIO_Port,qian_7_Pin);
 	
+	
+	uint32_t hou[7];
+	hou[0]=HAL_GPIO_ReadPin(hou_1_GPIO_Port,hou_1_Pin);
+  hou[1]=HAL_GPIO_ReadPin(hou_2_GPIO_Port,hou_2_Pin);
+  hou[2]=HAL_GPIO_ReadPin(hou_3_GPIO_Port,hou_3_Pin);
+  hou[3]=HAL_GPIO_ReadPin(hou_4_GPIO_Port,hou_4_Pin);
+  hou[4]=HAL_GPIO_ReadPin(hou_5_GPIO_Port,hou_5_Pin);
+  hou[5]=HAL_GPIO_ReadPin(hou_6_GPIO_Port,hou_6_Pin);
+  hou[6]=HAL_GPIO_ReadPin(hou_7_GPIO_Port,hou_7_Pin);
+	
 	if(qian[3] == 1)
-		qianjin(700, 0, 0);
+		qianjin(750, 0, 0);
 	if(qian[2] == 1 )
 		qianjin(650, 0, 100);
 	else if(qian[4] == 1 )
 		qianjin(650, 100, 0);
 	
 	if(qian[1] == 1 && qian[5] == 0)
-		qianjin(600, 0, 150);
+		qianjin(600, 0, 130);
 	if(qian[5] == 1 && qian[1] == 0)
-		qianjin(600, 150, 0);
+		qianjin(600, 130, 0);
 	
 	if(qian[0] == 1 && qian[6] == 0)
-		qianjin(600, 0, 150);
+		qianjin(600, 0, 160);
 	if(qian[6] == 1 && qian[0] == 0)
-		qianjin(600, 150, 0);
+		qianjin(600, 160, 0);
 
 
 	
@@ -439,6 +449,33 @@ void Xunji()
 	//printf();
 
 }
+
+
+
+  
+	
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim == (&htim10))
