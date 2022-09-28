@@ -161,7 +161,7 @@ int main(void)
 		
 		
     car_control(0,0,700);
-   	HAL_Delay(2000);
+   	HAL_Delay(2100);
 		qianjingezi(3);
 		
 		car_control(0,0,-700);
@@ -181,12 +181,12 @@ int main(void)
 		
 		
 		car_control(0,0,-700);
-   	HAL_Delay(1000);
+   	HAL_Delay(1100);
 		
 		
 	 car_control(700,0,0);
-   	HAL_Delay(500);
-		
+   	HAL_Delay(1800);
+		Stop();
 
 	
 
