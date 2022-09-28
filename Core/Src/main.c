@@ -145,11 +145,9 @@ int main(void)
 	  car_control(0,0,-700);
 	  HAL_Delay(1000);
 	  qianjingezi(6);
-	
-	  youzhuan();
-		
-		
-		HAL_Delay(500);
+	   youzhuan();
+
+		HAL_Delay(1000);
 	  
 		car_control(0,0,700);
 	  HAL_Delay(2000);    //取到物块
@@ -157,7 +155,7 @@ int main(void)
 		qianjingezi(3);  
 		
 	  car_control(0,0,-700);
-   	HAL_Delay(1000);
+   	HAL_Delay(1200);
 		qianjingezi(1);
 		HAL_Delay(1000);    //放下物块
 		
@@ -172,26 +170,24 @@ int main(void)
 		qianjingezi(2);    //放下物块
 		HAL_Delay(500);
 		
+	 car_control(0,0,700);
+   	HAL_Delay(1100);
 		
-		zuozhuan();
 		qianjingezi(3);
 		
 		
+		car_control(700,0,0);
+	  HAL_Delay(500);
 		
-//		youzhuan();
-//		qianjingezi(2);
-//		HAL_Delay(1000);
-//		zuozhuan();
-//		qianjingezi(3);
-//		car_control(700,0,0);
-//		
-//		car_control(0,0,-700);
-//   	HAL_Delay(1000);
-//		
-//		qianjingezi(1);
-//		
 		
-	
+		car_control(0,0,-700);
+   	HAL_Delay(1000);
+		
+		
+	 car_control(700,0,0);
+   	HAL_Delay(500);
+		
+
 	
 
 		while(1);
