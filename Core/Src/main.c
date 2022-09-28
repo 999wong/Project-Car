@@ -141,23 +141,59 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
   
-	qianjingezi(2);
+	  qianjingezi(1);
+	  car_control(0,0,-700);
+	  HAL_Delay(1000);
+	  qianjingezi(6);
 	
-//	car_control(0,0,-700);
-//	
-//	HAL_Delay(1000);
+	  youzhuan();
+		
+		
+		HAL_Delay(500);
+	  
+		car_control(0,0,700);
+	  HAL_Delay(2000);    //取到物块
+		
+		qianjingezi(3);  
+		
+	  car_control(0,0,-700);
+   	HAL_Delay(1000);
+		qianjingezi(1);
+		HAL_Delay(1000);    //放下物块
+		
+		
+    car_control(0,0,700);
+   	HAL_Delay(2000);
+		qianjingezi(3);
+		
+		car_control(0,0,-700);
+   	HAL_Delay(1000);
+
+		qianjingezi(2);    //放下物块
+		HAL_Delay(500);
+		
+		
+		zuozhuan();
+		qianjingezi(3);
+		
+		
+		
+//		youzhuan();
+//		qianjingezi(2);
+//		HAL_Delay(1000);
+//		zuozhuan();
+//		qianjingezi(3);
+//		car_control(700,0,0);
+//		
+//		car_control(0,0,-700);
+//   	HAL_Delay(1000);
+//		
+//		qianjingezi(1);
+//		
+		
 	
-//	qianjingezi(8);
-	youzhuan();
-	qianjingezi(2);
-//	qianjingezi(7);
-//	zuozhuan();
-//	qianjingezi(8);
-//	
 	
-	
- // youzhuan();
-//		qianjingezi(5);
+
 		while(1);
 		
 		
