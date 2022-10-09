@@ -331,22 +331,17 @@ void Stop(void)
 uint32_t gezi_flag = 0;
 void qianjingezi(uint32_t gezi_num)
 {
-		while(gezi_num)
-		{ 
-				HAL_TIM_Base_Start_IT(&htim10);
-				run_flag = QIANJIN;
-				car_control(DEACT_SPEED, 0, 0);
-				gezi_flag = 0;
-				HAL_Delay(500);
-				while(gezi_flag == 0)
-						HAL_Delay(1);
-				gezi_num --;
-				Stop();
-			  HAL_Delay(1000);
-				
-		}
+    HAL_TIM_Base_Start_IT(&htim10);
+    run_flag = QIANJIN;
+    while(gezi_num)
+    { 
+        HAL_Delay(300);
+        gezi_flag = 0;
+        while(gezi_flag == 0)
+                HAL_Delay(1);
+        gezi_num --;
+    }
     Stop();
-
 }
 
 uint32_t xuanzhuan_flag = 0;
@@ -354,8 +349,9 @@ void zuozhuan()
 {
     run_flag = ZUOZHUAN;
     car_control(0, 0, 700);
-    HAL_Delay(500);
+    HAL_Delay(300);
     HAL_TIM_Base_Start_IT(&htim10); 
+    xuanzhuan_flag = 1;
     while(xuanzhuan_flag == 0)
         HAL_Delay(1);
     HAL_GPIO_TogglePin(LED_GPIO_Port,LED_Pin);
@@ -366,8 +362,9 @@ void youzhuan()
 {
     run_flag = YOUZHUAN;
     car_control(0, 0, -700);
-    HAL_Delay(500);
+    HAL_Delay(300);
     HAL_TIM_Base_Start_IT(&htim10); 
+    xuanzhuan_flag = 1;
     while(xuanzhuan_flag == 0)
         HAL_Delay(1);
     HAL_GPIO_TogglePin(LED_GPIO_Port,LED_Pin);
