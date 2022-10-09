@@ -72,8 +72,8 @@ void qianjingezi(uint32_t gezi_num);
 void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RL);  //左前 右前 左后 右后
 void car_control(int32_t x, int32_t y, int32_t w);             //X轴 Y轴 角速度
 
-void 		zuozhuan();
-	void			youzhuan();
+void 	zuozhuan();
+void	youzhuan();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -190,21 +190,9 @@ int main(void)
 		
 		car_control(0,0,-700);
    	HAL_Delay(1000);
-		
-		
 	 car_control(700,0,0);
    	HAL_Delay(500);
-		
-
-	
-
-		while(1);
-		
-		
-		
-		
-		
-	
+	while(1);
 	}
   /* USER CODE END 3 */
 }

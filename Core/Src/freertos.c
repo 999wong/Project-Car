@@ -52,7 +52,8 @@ osThreadId defaultTaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-
+void master_run_TASK(void const * argument);
+osThreadId master_runTaskHandle;
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
@@ -107,6 +108,10 @@ void MX_FREERTOS_Init(void) {
   defaultTaskHandle = osThreadCreate(osThread(defaultTask), NULL);
 
   /* USER CODE BEGIN RTOS_THREADS */
+  osThreadDef(mainTask, master_run_TASK, osPriorityNormal, 0, 128);
+  defaultTaskHandle = osThreadCreate(osThread(mainTask),NULL);
+  
+  xTaskCreate((const void *)master_run_TASK, "aaaa", 1024, NULL, 4, NULL);
   /* add threads, ... */
   /* USER CODE END RTOS_THREADS */
 
@@ -132,7 +137,13 @@ void StartDefaultTask(void const * argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-
+void master_run_TASK(void const * argument)
+{
+    for(;;)
+    {
+        osDelay(1);
+    }
+}
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
