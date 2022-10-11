@@ -20,6 +20,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "tim.h"
+#include "usart.h"
 #include "gpio.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -69,6 +70,7 @@ void Stop(void);
 void qianjingezi(uint32_t gezi_num);
 void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RL);  //左前 右前 左后 右后
 void car_control(int32_t x, int32_t y, int32_t w);             //X轴 Y轴 角速度
+void car_control(int32_t x, int32_t y, int32_t w);             //X�? Y�? 角�?�度
 
 void 		zuozhuan();
 	void			youzhuan();
@@ -114,19 +116,23 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_TIM1_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_TIM4_Init();
   MX_TIM5_Init();
+  MX_TIM8_Init();
   MX_TIM10_Init();
+  MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_3);   //M2
-	HAL_TIM_PWM_Start(&htim2,TIM_CHANNEL_4);
+	HAL_TIM_PWM_Start(&htim5,TIM_CHANNEL_3);   //M2
+	HAL_TIM_PWM_Start(&htim5,TIM_CHANNEL_4);
 	
-	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_1);    //M3
-	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);	
+	HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_1);    //M3
+	HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_2);	
 	
-	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);     //M4
-	HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
+	HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_3);     //M4
+	HAL_TIM_PWM_Start(&htim8,TIM_CHANNEL_4);
 	
 	HAL_TIM_PWM_Start(&htim5,TIM_CHANNEL_1);     //M1
 	HAL_TIM_PWM_Start(&htim5,TIM_CHANNEL_2);	
@@ -314,14 +320,14 @@ void Stop(void)
 {	  
         HAL_TIM_Base_Stop_IT(&htim10); 
         run_flag = STPO_FLAG;
-        __HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3,1000);  //M2           
-		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_4,1000); 
+        __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_3,1000);  //M2           
+		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_4,1000); 
 		
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_1,1000);   //M3
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_2,1000);
+		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1,1000);   //M3
+		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_2,1000);
 	
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_3,1000);    //M4
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_4,1000);	  
+		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3,1000);    //M4
+		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_4,1000);	  
 		
 		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,1000);    //M1
 		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2,1000);                
@@ -487,6 +493,7 @@ void Xunji()
 /************************************************/ 
         
 /******************前后双循迹纠偏*******************/
+/******************前后双循迹纠�?*******************/
 //      int32_t y_fix, w_fix;
 //      if (qian_num == 1 && hou_num ==1)
 //      {
