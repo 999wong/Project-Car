@@ -70,10 +70,9 @@ void Stop(void);
 void qianjingezi(uint32_t gezi_num);
 void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RL);  //左前 右前 左后 右后
 void car_control(int32_t x, int32_t y, int32_t w);             //X轴 Y轴 角速度
-void car_control(int32_t x, int32_t y, int32_t w);             //X�? Y�? 角�?�度
 
-void 		zuozhuan();
-	void			youzhuan();
+void zuozhuan();
+void youzhuan();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -264,43 +263,43 @@ void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RH)
 {
     if(LQ >= 0)
     {
-        __HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_1, LQ);   	        //M3  			前左轮
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_2, 0);
+        TIM8->CCR1 = LQ;        //M3  			前左轮
+        TIM8->CCR2 = 0;
     }
     else
     {
-        __HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_1, 0);   	        //M3  			前左轮
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_2, abs(LQ));
+        TIM8->CCR1 = 0;         //M3  			前左轮
+        TIM8->CCR2 = abs(LQ);
     }
     if(RQ >= 0)
     {
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_3, 0);    			//M4   			前右轮
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_4, RQ);	  
+        TIM8->CCR1 = RQ;        //M4  			前右轮
+        TIM8->CCR2 = 0;
     }
     else
     {
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_3, abs(RQ));    	//M4   			前右轮
-		__HAL_TIM_SetCompare(&htim3,TIM_CHANNEL_4, 0);	  
+        TIM8->CCR1 = 0;         //M4  			前右轮
+        TIM8->CCR2 = abs(RQ);
     }
     if(LH >= 0)
     {
-		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3, LH);  	        //M2        后左轮    
-		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_4, 0); 
+        TIM5->CCR3 = LH;        //M2  			后左轮
+        TIM5->CCR4 = 0;
     }
     else
     {
-		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_3, 0);  	        //M2        后左轮    
-		__HAL_TIM_SetCompare(&htim2,TIM_CHANNEL_4, abs(LH));  
+        TIM5->CCR3 = 0;         //M2  			后左轮
+        TIM5->CCR4 = abs(LH);
     }
     if(RH >= 0)
     {
-		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1, 0);    			//M1     		后右轮
-		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2, RH);	
+        TIM5->CCR1 = RH;        //M1  			后右轮
+        TIM5->CCR2 = 0;
     }
     else
     {
-		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1, abs(RH));        //M1     		后右轮
-		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2, 0);	
+        TIM5->CCR1 = 0;         //M1  			后右轮
+        TIM5->CCR2 = abs(RH);
     }
 }
 
@@ -318,20 +317,18 @@ void car_control(int32_t x, int32_t y, int32_t w)
 
 void Stop(void)
 {	  
-        HAL_TIM_Base_Stop_IT(&htim10); 
-        run_flag = STPO_FLAG;
-        __HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_3,1000);  //M2           
-		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_4,1000); 
-		
-		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_1,1000);   //M3
-		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_2,1000);
-	
-		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_3,1000);    //M4
-		__HAL_TIM_SetCompare(&htim8,TIM_CHANNEL_4,1000);	  
-		
-		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_1,1000);    //M1
-		__HAL_TIM_SetCompare(&htim5,TIM_CHANNEL_2,1000);                
-		
+    HAL_TIM_Base_Stop_IT(&htim10); 
+    run_flag = STPO_FLAG;
+    
+    TIM5->CCR1 = 1000;
+    TIM5->CCR2 = 1000;
+    TIM5->CCR3 = 1000;
+    TIM5->CCR4 = 1000;
+    
+    TIM8->CCR1 = 1000;
+    TIM8->CCR2 = 1000;
+    TIM8->CCR3 = 1000;
+    TIM8->CCR4 = 1000;  
 }
 
 uint32_t gezi_flag = 0;
