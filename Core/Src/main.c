@@ -137,6 +137,10 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim5,TIM_CHANNEL_2);	
 	
 	HAL_TIM_Encoder_Start(&htim1,TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim2,TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim3,TIM_CHANNEL_ALL);
+	HAL_TIM_Encoder_Start(&htim4,TIM_CHANNEL_ALL);
+	
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -146,25 +150,83 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+		
+		
+		car_control(700,0,0);
+	
   
 		uint16_t  Encode_1;
-		float M1_Speed;
+		uint16_t  Encode_2;
+		uint16_t  Encode_3;
+		uint16_t  Encode_4;
+		float M1_Speed,M2_Speed,M3_Speed,M4_Speed;
+	
 		Encode_1=__HAL_TIM_GET_COUNTER(&htim1);
+		Encode_2=__HAL_TIM_GET_COUNTER(&htim2);
+		Encode_3=__HAL_TIM_GET_COUNTER(&htim3);
+		Encode_4=__HAL_TIM_GET_COUNTER(&htim4);
+		
 		__HAL_TIM_SET_COUNTER(&htim1,0);
+		__HAL_TIM_SET_COUNTER(&htim2,0);
+		__HAL_TIM_SET_COUNTER(&htim3,0);
+		__HAL_TIM_SET_COUNTER(&htim4,0);
+		
 		printf("Encode_1:   %d   \n",Encode_1);
+		printf("Encode_2:   %d   \n",Encode_2);
+		printf("Encode_3:   %d   \n",Encode_3);
+		printf("Encode_4:   %d   \n",Encode_4);
+		
 		HAL_Delay(1000);
 		
 		if (Encode_1<32768)
 		{
-		   M1_Speed=Encode_1/1340.0*6*3.14;
+		  M1_Speed=Encode_1/1340.0*6*3.14;
+			
 		}
 		else 
     {
 		   M1_Speed=(Encode_1-65536)/1340.0*6*3.14;
+			
+		}			
+		
+		if (Encode_2<32768)
+		{
+		  M2_Speed=-Encode_2/1340.0*6*3.14;
+			
+		}
+		else 
+    {
+		   M2_Speed=-(Encode_2-65536)/1340.0*6*3.14;
+			
+		}			
+	
+		if (Encode_3<32768)
+		{
+		  M3_Speed=Encode_3/1340.0*6*3.14;
+			
+		}
+		else 
+    {
+		   M3_Speed=(Encode_3-65536)/1340.0*6*3.14;
+			
+		}			
+		
+		if (Encode_4<32768)
+		{
+		  M4_Speed=Encode_4/1340.0*6*3.14;
+			
+		}
+		else 
+    {
+		   M4_Speed=(Encode_4-65536)/1340.0*6*3.14;
+			
 		}			
 		
 	   
 		printf("M1_位移:   %f    cm \n",M1_Speed);
+	  printf("M2_位移:   %f    cm \n",M2_Speed);
+		printf("M3_位移:   %f    cm \n",M3_Speed);
+		printf("M4_位移:   %f    cm \n",M4_Speed);
 
 //	  qianjingezi(1);
 //	  car_control(0,0,-700);
@@ -215,7 +277,7 @@ int main(void)
 
 	
 
-		while(1);
+//		while(1);
 		
 		
 		
@@ -293,13 +355,13 @@ void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RH)
     }
     if(RQ >= 0)
     {
-        TIM8->CCR1 = RQ;        //M4  			前右轮
-        TIM8->CCR2 = 0;
+        TIM8->CCR3 = RQ;        //M4  			前右轮
+        TIM8->CCR4 = 0;
     }
     else
     {
-        TIM8->CCR1 = 0;         //M4  			前右轮
-        TIM8->CCR2 = abs(RQ);
+        TIM8->CCR3 = 0;         //M4  			前右轮
+        TIM8->CCR4 = abs(RQ);
     }
     if(LH >= 0)
     {
