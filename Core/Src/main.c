@@ -25,7 +25,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -136,6 +136,7 @@ int main(void)
 	HAL_TIM_PWM_Start(&htim5,TIM_CHANNEL_1);     //M1
 	HAL_TIM_PWM_Start(&htim5,TIM_CHANNEL_2);	
 	
+	HAL_TIM_Encoder_Start(&htim1,TIM_CHANNEL_ALL);
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -146,52 +147,71 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
   
-	  qianjingezi(1);
-	  car_control(0,0,-700);
-	  HAL_Delay(1000);
-	  qianjingezi(6);
-	   youzhuan();
-
+		uint16_t  Encode_1;
+		float M1_Speed;
+		Encode_1=__HAL_TIM_GET_COUNTER(&htim1);
+		__HAL_TIM_SET_COUNTER(&htim1,0);
+		printf("Encode_1:   %d   \n",Encode_1);
 		HAL_Delay(1000);
-	  
-		car_control(0,0,700);
-	  HAL_Delay(2000);    //取到物块
 		
-		qianjingezi(3);  
+		if (Encode_1<32768)
+		{
+		   M1_Speed=Encode_1/1340.0*6*3.14;
+		}
+		else 
+    {
+		   M1_Speed=(Encode_1-65536)/1340.0*6*3.14;
+		}			
 		
-	  car_control(0,0,-700);
-   	HAL_Delay(1200);
-		qianjingezi(1);
-		HAL_Delay(1000);    //放下物块
-		
-		
-    car_control(0,0,700);
-   	HAL_Delay(2100);
-		qianjingezi(3);
-		
-		car_control(0,0,-700);
-   	HAL_Delay(1000);
+	   
+		printf("M1_位移:   %f    cm \n",M1_Speed);
 
-		qianjingezi(2);    //放下物块
-		HAL_Delay(500);
-		
-	 car_control(0,0,700);
-   	HAL_Delay(1100);
-		
-		qianjingezi(3);
-		
-		
-		car_control(700,0,0);
-	  HAL_Delay(500);
-		
-		
-		car_control(0,0,-700);
-   	HAL_Delay(1100);
-		
-		
-	 car_control(700,0,0);
-   	HAL_Delay(1800);
-		Stop();
+//	  qianjingezi(1);
+//	  car_control(0,0,-700);
+//	  HAL_Delay(1000);
+//	  qianjingezi(6);
+//	   youzhuan();
+
+//		HAL_Delay(1000);
+//	  
+//		car_control(0,0,700);
+//	  HAL_Delay(2000);    //取到物块
+//		
+//		qianjingezi(3);  
+//		
+//	  car_control(0,0,-700);
+//   	HAL_Delay(1200);
+//		qianjingezi(1);
+//		HAL_Delay(1000);    //放下物块
+//		
+//		
+//    car_control(0,0,700);
+//   	HAL_Delay(2100);
+//		qianjingezi(3);
+//		
+//		car_control(0,0,-700);
+//   	HAL_Delay(1000);
+
+//		qianjingezi(2);    //放下物块
+//		HAL_Delay(500);
+//		
+//	 car_control(0,0,700);
+//   	HAL_Delay(1100);
+//		
+//		qianjingezi(3);
+//		
+//		
+//		car_control(700,0,0);
+//	  HAL_Delay(500);
+//		
+//		
+//		car_control(0,0,-700);
+//   	HAL_Delay(1100);
+//		
+//		
+//	 car_control(700,0,0);
+//   	HAL_Delay(1800);
+//		Stop();
 
 	
 

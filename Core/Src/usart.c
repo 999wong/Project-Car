@@ -100,6 +100,14 @@ void HAL_UART_MspDeInit(UART_HandleTypeDef* uartHandle)
 }
 
 /* USER CODE BEGIN 1 */
+#include "stdio.h"
+
+int fputc(int c, FILE * f)
+{
+	uint8_t ch=c;
+	HAL_UART_Transmit(&huart1,&ch,1,1000);//·¢ËÍ´®¿Ú
+	return c;
+}
 
 /* USER CODE END 1 */
 
