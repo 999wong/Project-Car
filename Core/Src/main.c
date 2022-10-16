@@ -71,8 +71,9 @@ void qianjingezi(uint32_t gezi_num);
 void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RL);  //左前 右前 左后 右后
 void car_control(int32_t x, int32_t y, int32_t w);             //X轴 Y轴 角速度
 
-void zuozhuan();
-void youzhuan();
+void zuozhuan(void);
+void youzhuan(void);
+void CeJu(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -151,139 +152,12 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 		
-		
-		car_control(700,0,0);
-	
-  
-		uint16_t  Encode_1;
-		uint16_t  Encode_2;
-		uint16_t  Encode_3;
-		uint16_t  Encode_4;
-		float M1_Speed,M2_Speed,M3_Speed,M4_Speed;
-	
-		Encode_1=__HAL_TIM_GET_COUNTER(&htim1);
-		Encode_2=__HAL_TIM_GET_COUNTER(&htim2);
-		Encode_3=__HAL_TIM_GET_COUNTER(&htim3);
-		Encode_4=__HAL_TIM_GET_COUNTER(&htim4);
-		
-		__HAL_TIM_SET_COUNTER(&htim1,0);
-		__HAL_TIM_SET_COUNTER(&htim2,0);
-		__HAL_TIM_SET_COUNTER(&htim3,0);
-		__HAL_TIM_SET_COUNTER(&htim4,0);
-		
-		printf("Encode_1:   %d   \n",Encode_1);
-		printf("Encode_2:   %d   \n",Encode_2);
-		printf("Encode_3:   %d   \n",Encode_3);
-		printf("Encode_4:   %d   \n",Encode_4);
-		
-		HAL_Delay(1000);
-		
-		if (Encode_1<32768)
-		{
-		  M1_Speed=Encode_1/1340.0*6*3.14;
-			
-		}
-		else 
-    {
-		   M1_Speed=(Encode_1-65536)/1340.0*6*3.14;
-			
-		}			
-		
-		if (Encode_2<32768)
-		{
-		  M2_Speed=-Encode_2/1340.0*6*3.14;
-			
-		}
-		else 
-    {
-		   M2_Speed=-(Encode_2-65536)/1340.0*6*3.14;
-			
-		}			
-	
-		if (Encode_3<32768)
-		{
-		  M3_Speed=Encode_3/1340.0*6*3.14;
-			
-		}
-		else 
-    {
-		   M3_Speed=(Encode_3-65536)/1340.0*6*3.14;
-			
-		}			
-		
-		if (Encode_4<32768)
-		{
-		  M4_Speed=Encode_4/1340.0*6*3.14;
-			
-		}
-		else 
-    {
-		   M4_Speed=(Encode_4-65536)/1340.0*6*3.14;
-			
-		}			
-		
-	   
-		printf("M1_位移:   %f    cm \n",M1_Speed);
-	  printf("M2_位移:   %f    cm \n",M2_Speed);
-		printf("M3_位移:   %f    cm \n",M3_Speed);
-		printf("M4_位移:   %f    cm \n",M4_Speed);
+    //qianjingezi(5);
+		 HAL_TIM_Base_Start_IT(&htim10);
+      
 
-//	  qianjingezi(1);
-//	  car_control(0,0,-700);
-//	  HAL_Delay(1000);
-//	  qianjingezi(6);
-//	   youzhuan();
-
-//		HAL_Delay(1000);
-//	  
-//		car_control(0,0,700);
-//	  HAL_Delay(2000);    //取到物块
-//		
-//		qianjingezi(3);  
-//		
-//	  car_control(0,0,-700);
-//   	HAL_Delay(1200);
-//		qianjingezi(1);
-//		HAL_Delay(1000);    //放下物块
-//		
-//		
-//    car_control(0,0,700);
-//   	HAL_Delay(2100);
-//		qianjingezi(3);
-//		
-//		car_control(0,0,-700);
-//   	HAL_Delay(1000);
-
-//		qianjingezi(2);    //放下物块
-//		HAL_Delay(500);
-//		
-//	 car_control(0,0,700);
-//   	HAL_Delay(1100);
-//		
-//		qianjingezi(3);
-//		
-//		
-//		car_control(700,0,0);
-//	  HAL_Delay(500);
-//		
-//		
-//		car_control(0,0,-700);
-//   	HAL_Delay(1100);
-//		
-//		
-//	 car_control(700,0,0);
-//   	HAL_Delay(1800);
-//		Stop();
-
-	
-
-//		while(1);
+		while(1);
 		
-		
-		
-		
-		
-	
 	}
   /* USER CODE END 3 */
 }
@@ -467,7 +341,7 @@ void Xunji()
     qian[3]=HAL_GPIO_ReadPin(qian_4_GPIO_Port,qian_4_Pin);
     qian[4]=HAL_GPIO_ReadPin(qian_5_GPIO_Port,qian_5_Pin);
     qian[5]=HAL_GPIO_ReadPin(qian_6_GPIO_Port,qian_6_Pin);
-	qian[6]=HAL_GPIO_ReadPin(qian_7_GPIO_Port,qian_7_Pin);
+		qian[6]=HAL_GPIO_ReadPin(qian_7_GPIO_Port,qian_7_Pin);
     
     qian_num = qian[0] +qian[1] +qian[2] +qian[3] +qian[4] +qian[5] +qian[6];
     if ( qian_num == 1)             //如果只有一个循迹在线上
@@ -480,8 +354,8 @@ void Xunji()
     }
 	
 	
-	uint32_t hou[7]; int32_t hou_num , hou_flag = 0;
-	hou[6]=HAL_GPIO_ReadPin(hou_1_GPIO_Port,hou_1_Pin);
+		uint32_t hou[7]; int32_t hou_num , hou_flag = 0;
+		hou[6]=HAL_GPIO_ReadPin(hou_1_GPIO_Port,hou_1_Pin);
     hou[5]=HAL_GPIO_ReadPin(hou_2_GPIO_Port,hou_2_Pin);
     hou[4]=HAL_GPIO_ReadPin(hou_3_GPIO_Port,hou_3_Pin);
     hou[3]=HAL_GPIO_ReadPin(hou_4_GPIO_Port,hou_4_Pin);
@@ -501,7 +375,7 @@ void Xunji()
     
     uint32_t zuo[7]; int32_t zuo_num , zuo_flag = 0;
     
-	zuo[6]=HAL_GPIO_ReadPin(zuo_1_GPIO_Port,zuo_1_Pin);
+		zuo[6]=HAL_GPIO_ReadPin(zuo_1_GPIO_Port,zuo_1_Pin);
     zuo[5]=HAL_GPIO_ReadPin(zuo_2_GPIO_Port,zuo_2_Pin);
     zuo[4]=HAL_GPIO_ReadPin(zuo_3_GPIO_Port,zuo_3_Pin);
     zuo[3]=HAL_GPIO_ReadPin(zuo_4_GPIO_Port,zuo_4_Pin);
@@ -572,8 +446,7 @@ void Xunji()
 /************************************************/ 
         
 /******************前后双循迹纠偏*******************/
-/******************前后双循迹纠�?*******************/
-//      int32_t y_fix, w_fix;
+//      int32_t y_fix, w_fix, rec_speed;
 //      if (qian_num == 1 && hou_num ==1)
 //      {
 //        if (qian_flag + hou_flag >= 5 && qian_flag + hou_flag <= 7)
@@ -594,10 +467,16 @@ void Xunji()
 //        if (qian_num - hou_num < 0 && qian_num - hou_num >= -2)
 //            w_fix = 50;
 //        if (qian_num - hou_num > 2)
+//				{
 //            w_fix = -100;
+//						rec_speed = -100;
+//				}
 //        if (qian_num - hou_num < -2)
+//				{
 //            w_fix = 100;
-//        car_control(DEACT_SPEED, y_fix, w_fix);
+//						rec_speed = -100;
+//				}
+//        car_control(DEACT_SPEED + rec_speed, y_fix, w_fix);
 //      }
 //      else
 //          car_control(DEACT_SPEED, 0, 0);
@@ -621,14 +500,126 @@ void Xunji()
     }
 }
 
+
+float M1_Speed,M2_Speed,M3_Speed,M4_Speed;
+
+void PID(float Real_speed)
+{
+   float T_speed,KP,KI,error_speed;
+		static float error_add = 0;
+	 int32_t T_duty;                     //改变量
+		T_speed = 2.5;
+		KP = 600;
+	  KI = 50;
+		error_speed=T_speed-Real_speed;
+		error_add = error_add + error_speed;
+  	T_duty=error_speed*KP + error_add * KI;   
+	
+		car_run(0,0,0,T_duty);
+    printf("PWM输出值为：      %d  \n",T_duty);
+
+
+
+}
+
+
+
+
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim == (&htim10))
     {
-        Xunji();
+      Xunji();
+			static uint32_t flag = 0;
+			if(flag<10)
+			flag++;
+			else
+			{
+			flag=0;
+			CeJu();
+			PID(M1_Speed);
+			}
         
     }
 }
+
+
+
+void CeJu()
+{
+		uint16_t  Encode_1;
+		uint16_t  Encode_2;
+		uint16_t  Encode_3;
+		uint16_t  Encode_4;
+	
+		Encode_1=__HAL_TIM_GET_COUNTER(&htim1);
+		Encode_2=__HAL_TIM_GET_COUNTER(&htim2);
+		Encode_3=__HAL_TIM_GET_COUNTER(&htim3);
+		Encode_4=__HAL_TIM_GET_COUNTER(&htim4);
+		
+		__HAL_TIM_SET_COUNTER(&htim1,0);
+		__HAL_TIM_SET_COUNTER(&htim2,0);
+		__HAL_TIM_SET_COUNTER(&htim3,0);
+		__HAL_TIM_SET_COUNTER(&htim4,0);
+		
+		printf("Encode_1:   %d   \n",Encode_1);
+//		printf("Encode_2:   %d   \n",Encode_2);
+//		printf("Encode_3:   %d   \n",Encode_3);
+//		printf("Encode_4:   %d   \n",Encode_4);
+		
+
+		
+		if (Encode_1<32768)
+		{
+		  M1_Speed=Encode_1/1340.0*6*3.14;
+			
+		}
+		else 
+    {
+		   M1_Speed=(Encode_1-65536)/1340.0*6*3.14;
+			
+		}			
+		
+		if (Encode_2<32768)
+		{
+		  M2_Speed=-Encode_2/1340.0*6*3.14;
+			
+		}
+		else 
+    {
+		   M2_Speed=-(Encode_2-65536)/1340.0*6*3.14;
+			
+		}			
+	
+		if (Encode_3<32768)
+		{
+		  M3_Speed=Encode_3/1340.0*6*3.14;
+			
+		}
+		else 
+    {
+		   M3_Speed=(Encode_3-65536)/1340.0*6*3.14;
+			
+		}			
+		
+		if (Encode_4<32768)
+		{
+		  M4_Speed=Encode_4/1340.0*6*3.14;
+			
+		}
+		else 
+    {
+		   M4_Speed=(Encode_4-65536)/1340.0*6*3.14;
+			
+		}			
+		
+	   
+		printf("M1_位移:   %f    cm \n",M1_Speed);
+//	  printf("M2_位移:   %f    cm \n",M2_Speed);
+//		printf("M3_位移:   %f    cm \n",M3_Speed);
+//		printf("M4_位移:   %f    cm \n",M4_Speed);
+//		
+	}
 
 /* USER CODE END 4 */
 
