@@ -227,15 +227,16 @@ void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RH)
         TIM8->CCR1 = 0;         //M3  			前左轮
         TIM8->CCR2 = abs(LQ);
     }
+    
     if(RQ >= 0)
     {
-        TIM8->CCR3 = RQ;        //M4  			前右轮
-        TIM8->CCR4 = 0;
+        TIM8->CCR3 = 0;        //M4  			前右轮
+        TIM8->CCR4 = RQ;
     }
     else
     {
-        TIM8->CCR3 = 0;         //M4  			前右轮
-        TIM8->CCR4 = abs(RQ);
+        TIM8->CCR3 = abs(RQ);         //M4  			前右轮
+        TIM8->CCR4 = 0;
     }
     if(LH >= 0)
     {
@@ -249,13 +250,13 @@ void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RH)
     }
     if(RH >= 0)
     {
-        TIM5->CCR1 = RH;        //M1  			后右轮
-        TIM5->CCR2 = 0;
+        TIM5->CCR1 = 0;        //M1  			后右轮
+        TIM5->CCR2 = RH;
     }
     else
     {
-        TIM5->CCR1 = 0;         //M1  			后右轮
-        TIM5->CCR2 = abs(RH);
+        TIM5->CCR1 = abs(RH);         //M1  			后右轮
+        TIM5->CCR2 = 0;
     }
 }
 
