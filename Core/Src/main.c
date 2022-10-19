@@ -226,6 +226,7 @@ void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RH)
         TIM8->CCR1 = 0;         //M3  			前左轮
         TIM8->CCR2 = abs(LQ);
     }
+    
     if(RQ >= 0)
     {
         TIM8->CCR3 = 0;        //M4  			前右轮
