@@ -36,18 +36,23 @@
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
 
-#define LQ_FIX 0
-#define RQ_FIX 0
-#define LH_FIX 0
-#define RH_FIX 0
-
-#define DEACT_SPEED 700
+#define DEACT_SPEED 2.5
 
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
 /* USER CODE BEGIN PM */
-
+struct Motor
+{
+	uint16_t Encode;
+	float T_speed;
+	float error_speed;
+	float error_add;
+	float error_last;
+	float real_speed;
+	int32_t T_duty;
+	
+}M1,M2,M3,M4;
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
@@ -59,17 +64,11 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void qianjin(uint32_t speed, uint32_t left_duty, uint32_t right_duty);
-void houtui(uint32_t speed);
-void Zuo_Guai(uint32_t speed);
-void You_Guai(uint32_t speed);
-void Zuo_WeiYi(uint32_t speed);
-void You_WeiYi(uint32_t speed);
 void Stop(void);
 
 void qianjingezi(uint32_t gezi_num);
 void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RL);  //左前 右前 左后 右后
-void car_control(int32_t x, int32_t y, int32_t w);             //X轴 Y轴 角速度
+void car_control(float x, float y, float w);            //X轴 Y轴 角速度
 
 void zuozhuan(void);
 void youzhuan(void);
@@ -153,8 +152,8 @@ int main(void)
     /* USER CODE BEGIN 3 */
 		
     //qianjingezi(5);
-		 HAL_TIM_Base_Start_IT(&htim10);
-      
+     HAL_TIM_Base_Start_IT(&htim10);
+	  car_control(3,0,0);
 
 		while(1);
 		
@@ -229,13 +228,13 @@ void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RH)
     }
     if(RQ >= 0)
     {
-        TIM8->CCR3 = RQ;        //M4  			前右轮
-        TIM8->CCR4 = 0;
+        TIM8->CCR3 = 0;        //M4  			前右轮
+        TIM8->CCR4 = RQ;
     }
     else
     {
-        TIM8->CCR3 = 0;         //M4  			前右轮
-        TIM8->CCR4 = abs(RQ);
+        TIM8->CCR3 = abs(RQ);  //M4  			前右轮
+        TIM8->CCR4 = 0;
     }
     if(LH >= 0)
     {
@@ -249,25 +248,24 @@ void car_run(int32_t LQ, int32_t RQ, int32_t LH, int32_t RH)
     }
     if(RH >= 0)
     {
-        TIM5->CCR1 = RH;        //M1  			后右轮
-        TIM5->CCR2 = 0;
+        TIM5->CCR1 = 0;        	//M1  			后右轮
+        TIM5->CCR2 = RH;
     }
     else
     {
-        TIM5->CCR1 = 0;         //M1  			后右轮
-        TIM5->CCR2 = abs(RH);
+        TIM5->CCR1 = abs(RH);   //M1  			后右轮
+        TIM5->CCR2 = 0;
     }
 }
 
-void car_control(int32_t x, int32_t y, int32_t w)
+void car_control(float x, float y, float w)
 {
-    int32_t lq, rq, lh, rh;
-    lq = x + y - w + LQ_FIX;
-    rq = x - y + w + LQ_FIX;
-    lh = x - y - w + LQ_FIX;
-    rh = x + y + w + LQ_FIX;
+    M3.T_speed = x + y - w;
+    M4.T_speed = x - y + w;
+    M2.T_speed = x - y - w;
+    M1.T_speed = x + y + w;
     
-    car_run(lq, rq, lh, rh);
+    car_run( M3.T_speed, M4.T_speed,M2.T_speed, M1.T_speed);
 }
 
 
@@ -307,7 +305,7 @@ uint32_t xuanzhuan_flag = 0;
 void zuozhuan()
 {
     run_flag = ZUOZHUAN;
-    car_control(0, 0, 700);
+    car_control(0, 0, 2.5);
     HAL_Delay(300);
     HAL_TIM_Base_Start_IT(&htim10); 
     xuanzhuan_flag = 1;
@@ -320,7 +318,7 @@ void zuozhuan()
 void youzhuan()
 {
     run_flag = YOUZHUAN;
-    car_control(0, 0, -700);
+    car_control(0, 0, -2.5);
     HAL_Delay(300);
     HAL_TIM_Base_Start_IT(&htim10); 
     xuanzhuan_flag = 1;
@@ -420,19 +418,19 @@ void Xunji()
         if(qian[3] == 1)        
             car_control(DEACT_SPEED, 0, 0);
         if(qian[2] == 1 && qian[4] == 0)
-            car_control(DEACT_SPEED, -50, 20);
+            car_control(DEACT_SPEED, -0.3, 0.2);
         else if(qian[4] == 1 && qian[2] == 0)
-            car_control(DEACT_SPEED, 50, -20);
+            car_control(DEACT_SPEED, 0.3, -0.2);
         
         if(qian[1] == 1 && qian[5] == 0)
-            car_control(DEACT_SPEED - 50, -100, 50);
+            car_control(DEACT_SPEED - 0.3, -0.5, 0.3);
         if(qian[5] == 1 && qian[1] == 0)
-            car_control(DEACT_SPEED - 50, 100, -50);
+            car_control(DEACT_SPEED - 0.3, 0.5, -0.3);
         
         if(qian[0] == 1 && qian[6] == 0)
-            car_control(DEACT_SPEED - 100, -100, 70);
+            car_control(DEACT_SPEED - 0.5, -0.5, 0.54);
         if(qian[6] == 1 && qian[0] == 0)
-            car_control(DEACT_SPEED - 100, 100, -70);
+            car_control(DEACT_SPEED - 0.5, 0.5, -0.4);
         
         if((qian[2] == 1 && qian[3] == 1 && qian[4] == 1) )   //前后循迹在线上则不纠偏
         {
@@ -501,25 +499,37 @@ void Xunji()
 }
 
 
-float M1_Speed,M2_Speed,M3_Speed,M4_Speed;
 
-void PID(float Real_speed)
+
+
+#define KP 150
+#define KI 125
+#define KD 25
+		
+void PID()
 {
-   float T_speed,KP,KI,error_speed;
-		static float error_add = 0;
-	 int32_t T_duty;                     //改变量
-		T_speed = 2.5;
-		KP = 600;
-	  KI = 50;
-		error_speed=T_speed-Real_speed;
-		error_add = error_add + error_speed;
-  	T_duty=error_speed*KP + error_add * KI;   
+
+		M1.error_speed = M1.T_speed - M1.real_speed;
+		M1.error_add += M1.error_speed;
+		M1.T_duty = M1.error_speed * KP + M1.error_add * KI + (M1.error_speed - M1.error_last) * KD;
+		M1.error_last = M1.error_speed;
 	
-		car_run(0,0,0,T_duty);
-    printf("PWM输出值为：      %d  \n",T_duty);
-
-
-
+		M2.error_speed = M2.T_speed - M2.real_speed;
+		M2.error_add += M2.error_speed;
+		M2.T_duty = M2.error_speed * KP + M2.error_add * KI + (M2.error_speed - M2.error_last) * KD;
+		M2.error_last = M2.error_speed;
+	
+		M3.error_speed = M3.T_speed - M3.real_speed;
+		M3.error_add += M3.error_speed;
+		M3.T_duty = M3.error_speed * KP + M3.error_add * KI + (M3.error_speed - M3.error_last) * KD;
+		M3.error_last = M3.error_speed;
+	
+		M4.error_speed = M4.T_speed - M4.real_speed;
+		M4.error_add += M4.error_speed;
+		M4.T_duty = M4.error_speed * KP + M4.error_add * KI + (M4.error_speed - M4.error_last) * KD;
+		M4.error_last = M4.error_speed;
+	
+		car_run(M3.T_duty,M4.T_duty,M2.T_duty,M1.T_duty);
 }
 
 
@@ -529,16 +539,16 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
     if (htim == (&htim10))
     {
-      Xunji();
-			static uint32_t flag = 0;
-			if(flag<10)
-			flag++;
-			else
-			{
-			flag=0;
-			CeJu();
-			PID(M1_Speed);
-			}
+    Xunji();
+	static uint32_t flag = 0;
+	if(flag<10)
+	flag++;
+	else
+	{
+	flag=0;
+	CeJu();
+	PID();
+	}
         
     }
 }
@@ -547,79 +557,58 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 
 void CeJu()
 {
-		uint16_t  Encode_1;
-		uint16_t  Encode_2;
-		uint16_t  Encode_3;
-		uint16_t  Encode_4;
+	M1.Encode=__HAL_TIM_GET_COUNTER(&htim1);
+	M2.Encode=__HAL_TIM_GET_COUNTER(&htim2);
+	M3.Encode=__HAL_TIM_GET_COUNTER(&htim3);
+	M4.Encode=__HAL_TIM_GET_COUNTER(&htim4);
 	
-		Encode_1=__HAL_TIM_GET_COUNTER(&htim1);
-		Encode_2=__HAL_TIM_GET_COUNTER(&htim2);
-		Encode_3=__HAL_TIM_GET_COUNTER(&htim3);
-		Encode_4=__HAL_TIM_GET_COUNTER(&htim4);
-		
-		__HAL_TIM_SET_COUNTER(&htim1,0);
-		__HAL_TIM_SET_COUNTER(&htim2,0);
-		__HAL_TIM_SET_COUNTER(&htim3,0);
-		__HAL_TIM_SET_COUNTER(&htim4,0);
-		
-		printf("Encode_1:   %d   \n",Encode_1);
-//		printf("Encode_2:   %d   \n",Encode_2);
-//		printf("Encode_3:   %d   \n",Encode_3);
-//		printf("Encode_4:   %d   \n",Encode_4);
-		
-
-		
-		if (Encode_1<32768)
-		{
-		  M1_Speed=Encode_1/1340.0*6*3.14;
-			
-		}
-		else 
-    {
-		   M1_Speed=(Encode_1-65536)/1340.0*6*3.14;
-			
-		}			
-		
-		if (Encode_2<32768)
-		{
-		  M2_Speed=-Encode_2/1340.0*6*3.14;
-			
-		}
-		else 
-    {
-		   M2_Speed=-(Encode_2-65536)/1340.0*6*3.14;
-			
-		}			
+	__HAL_TIM_SET_COUNTER(&htim1,0);
+	__HAL_TIM_SET_COUNTER(&htim2,0);
+	__HAL_TIM_SET_COUNTER(&htim3,0);
+	__HAL_TIM_SET_COUNTER(&htim4,0);
 	
-		if (Encode_3<32768)
-		{
-		  M3_Speed=Encode_3/1340.0*6*3.14;
-			
-		}
-		else 
-    {
-		   M3_Speed=(Encode_3-65536)/1340.0*6*3.14;
-			
-		}			
+	if (M1.Encode<32768)
+	{
+	  M1.real_speed=-M1.Encode/1340.0*6*3.14;
 		
-		if (Encode_4<32768)
-		{
-		  M4_Speed=Encode_4/1340.0*6*3.14;
-			
-		}
-		else 
-    {
-		   M4_Speed=(Encode_4-65536)/1340.0*6*3.14;
-			
-		}			
-		
-	   
-		printf("M1_位移:   %f    cm \n",M1_Speed);
-//	  printf("M2_位移:   %f    cm \n",M2_Speed);
-//		printf("M3_位移:   %f    cm \n",M3_Speed);
-//		printf("M4_位移:   %f    cm \n",M4_Speed);
-//		
 	}
+	else 
+	{
+	   M1.real_speed=-(M1.Encode-65536)/1340.0*6*3.14;
+	}			
+	
+	if (M2.Encode<32768)
+	{
+	  M2.real_speed=-M2.Encode/1340.0*6*3.14;
+	}
+	else 
+	{
+	   M2.real_speed=-(M2.Encode-65536)/1340.0*6*3.14;
+	}			
+
+	if (M3.Encode<32768)
+	{
+	  M3.real_speed=M3.Encode/1340.0*6*3.14;
+	}
+	else 
+	{
+	   M3.real_speed=(M3.Encode-65536)/1340.0*6*3.14;
+	}			
+	
+	if (M4.Encode<32768)
+	{
+	  M4.real_speed=-M4.Encode/1340.0*6*3.14;
+	}
+	else 
+	{
+	   M4.real_speed=-(M4.Encode-65536)/1340.0*6*3.14;
+	}			
+	
+   printf("SPEED1=%f\r\n",M1.real_speed);
+   printf("SPEED2=%f\r\n",M2.real_speed);
+   printf("SPEED3=%f\r\n",M3.real_speed);
+   printf("SPEED4=%f\r\n",M4.real_speed);
+}
 
 /* USER CODE END 4 */
 
