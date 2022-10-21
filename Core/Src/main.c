@@ -500,9 +500,9 @@ void Xunji()
         }
     }
 }
-#define KP 150
+#define KP 90
 #define KI 125
-#define KD 25
+#define KD 35
 
 void PID()
 {
@@ -519,18 +519,18 @@ void PID()
     M4.error_add += M4.error_speed;
 
     /*******************************位置式PID*****************************/
-    M1.T_duty = M1.error_speed * KP + M1.error_add * KI + (M1.error_speed - M1.error_last) * KD;
-    M2.T_duty = M2.error_speed * KP + M2.error_add * KI + (M2.error_speed - M2.error_last) * KD;
-    M3.T_duty = M3.error_speed * KP + M3.error_add * KI + (M3.error_speed - M3.error_last) * KD;
-    M4.T_duty = M4.error_speed * KP + M4.error_add * KI + (M4.error_speed - M4.error_last) * KD;
+//    M1.T_duty = M1.error_speed * KP + M1.error_add * KI + (M1.error_speed - M1.error_last) * KD;
+//    M2.T_duty = M2.error_speed * KP + M2.error_add * KI + (M2.error_speed - M2.error_last) * KD;
+//    M3.T_duty = M3.error_speed * KP + M3.error_add * KI + (M3.error_speed - M3.error_last) * KD;
+//    M4.T_duty = M4.error_speed * KP + M4.error_add * KI + (M4.error_speed - M4.error_last) * KD;
 
     /*********************************************************************/
 
     /*******************************增量式PID*****************************/
-    // M1.T_duty += (M1.error_speed - M1.error_last) * KP + M1.error_speed * KI + (M1.error_speed - 2 * M1.error_last + M1.error_prev) * KD;
-    // M2.T_duty += (M2.error_speed - M2.error_last) * KP + M2.error_speed * KI + (M2.error_speed - 2 * M2.error_last + M2.error_prev) * KD;
-    // M3.T_duty += (M3.error_speed - M3.error_last) * KP + M3.error_speed * KI + (M3.error_speed - 2 * M3.error_last + M3.error_prev) * KD;
-    // M4.T_duty += (M4.error_speed - M4.error_last) * KP + M4.error_speed * KI + (M4.error_speed - 2 * M4.error_last + M4.error_prev) * KD;
+	 M1.T_duty += (M1.error_speed - M1.error_last) * KP + M1.error_speed * KI + (M1.error_speed - 2 * M1.error_last + M1.error_prev) * KD;
+	 M2.T_duty += (M2.error_speed - M2.error_last) * KP + M2.error_speed * KI + (M2.error_speed - 2 * M2.error_last + M2.error_prev) * KD;
+	 M3.T_duty += (M3.error_speed - M3.error_last) * KP + M3.error_speed * KI + (M3.error_speed - 2 * M3.error_last + M3.error_prev) * KD;
+	 M4.T_duty += (M4.error_speed - M4.error_last) * KP + M4.error_speed * KI + (M4.error_speed - 2 * M4.error_last + M4.error_prev) * KD;
 
     /*******************************增量式PID*****************************/
 
@@ -538,7 +538,7 @@ void PID()
     M1.error_prev = M1.error_last;  
     M2.error_prev = M2.error_last;
     M3.error_prev = M3.error_last;
-    M4.error_prev = M4.error_prev;
+    M4.error_prev = M4.error_last;
 
     //将本次误差传递到上次误差
     M1.error_last = M1.error_speed;
