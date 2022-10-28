@@ -23,6 +23,7 @@
 #include "stm32f4xx_it.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "stdio.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,6 +59,7 @@
 /* External variables --------------------------------------------------------*/
 extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim10;
+extern UART_HandleTypeDef huart1;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -211,6 +213,58 @@ void TIM1_UP_TIM10_IRQHandler(void)
   /* USER CODE BEGIN TIM1_UP_TIM10_IRQn 1 */
 
   /* USER CODE END TIM1_UP_TIM10_IRQn 1 */
+}
+
+/**
+  * @brief This function handles USART1 global interrupt.
+  */
+
+#include "stdlib.h"
+	float read_speed;
+
+void car_control(float x, float y, float w);
+void USART1_IRQHandler(void)
+{
+  /* USER CODE BEGIN USART1_IRQn 0 */
+//    
+	static unsigned char  Love_buf[1024]={0};
+	static unsigned char *pLove_buf     = Love_buf;
+	static unsigned int   uLength       = 0;
+//	
+
+	//SPEED:3.00M\n
+	HAL_UART_Receive(&huart1,pLove_buf,1,1000);
+	if(*pLove_buf == '\n')
+	{
+	  HAL_UART_Transmit(&huart1,Love_buf,uLength,1000);
+		for(uint32_t i = 0; i <=uLength ; i ++)
+		{
+			if(Love_buf[i] == 'D' && Love_buf[i+1] == ':')
+			{
+				//read_speed = Love_buf[i+2] - '0' + (Love_buf[i+4] - '0') / 10.0 + (Love_buf[i+5] - '0') / 100.0;
+				read_speed = atof((const char *)&Love_buf[i+2]);
+				car_control(read_speed,0,0);
+				printf("read speed %f  \n",read_speed);
+			}
+		}
+	    uLength=0;
+		pLove_buf = Love_buf;
+	}
+	else
+	{
+	   uLength++;
+	   pLove_buf++;
+	}
+	
+	
+	
+	
+	
+  /* USER CODE END USART1_IRQn 0 */
+  HAL_UART_IRQHandler(&huart1);
+  /* USER CODE BEGIN USART1_IRQn 1 */
+
+  /* USER CODE END USART1_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
